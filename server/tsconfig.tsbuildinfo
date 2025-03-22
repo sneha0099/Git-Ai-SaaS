@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/config/db.ts","./src/controllers/user.controller.ts","./src/middlewares/auth.middleware.ts","./src/middlewares/validate.middleware.ts","./src/routes/auth.route.ts","./src/utils/generateotp.ts","./src/utils/generatetoken.ts","./src/utils/sendforgotpasswordmail.ts","./src/utils/sendotpmailer.ts","./src/validators/authschema.ts"],"version":"5.7.3"}
