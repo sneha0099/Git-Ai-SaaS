@@ -1,23 +1,14 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css'
+import { BrowserRouter } from 'react-router-dom';
+//import '@/styles/globals.css';
 
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App.tsx";
-import { Toaster } from "sonner";
-import ReactDOM from 'react-dom/client'
-import { ClerkProvider } from '@clerk/clerk-react'
-
-
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-
-if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Publishable Key")
-}
-
-createRoot(document.getElementById("root")!).render(
-  <>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
-      <App />
-    </ClerkProvider>
-
-  </>
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <BrowserRouter>
+    <App />
+    </BrowserRouter>
+  </React.StrictMode>
 );

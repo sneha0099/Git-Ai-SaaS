@@ -27,3 +27,6 @@ app.use(`/api/v1/auth`, authRoute);
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on http://localhost:${process.env.PORT}`);
 });
+
+
+
