@@ -10,7 +10,7 @@ interface User {
 }
 
 interface AuthState {
-  emailofUser: string | null;
+  // emailofUser: string | null;
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
@@ -45,9 +45,9 @@ const useAuthStore = create<AuthState>()(
             "http://localhost:3000/api/v1/auth/login",
             { email, password }
           );
-          const { user, token } = response.data;
+          const { data, token } = response.data;
           axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          set({ emailofUser: email, user, token, isAuthenticated: true });
+          set({ user: data,token, isAuthenticated: true });
           
         } catch (error) {
           console.error("Login failed:", error);
@@ -61,9 +61,9 @@ const useAuthStore = create<AuthState>()(
             "http://localhost:3000/api/v1/auth/register",
             { firstName, lastName, email, password }
           );
-          const { user } = response.data;
-          set({ user });
-          set({ emailofUser: email });
+          const { data } = response.data;
+    
+          set({ user:data });
         } catch (error) {
           console.error("Registration failed:", error);
           throw error;
@@ -99,9 +99,12 @@ const useAuthStore = create<AuthState>()(
 
       verify: async (email ,otp) => {
         try {
+          //const userEmail = useAuthStore.getState().user?.email  || email; // ✅ Get email from AuthStore
+
+          console.log(email, otp);
           const response = await axios.post(
             "http://localhost:3000/api/v1/auth/verify",
-            { email,otp }
+            { email, otp }
           );
           const { user } = response.data;
           set({ user });

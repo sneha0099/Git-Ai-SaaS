@@ -9,19 +9,12 @@ export default function Verify() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const email = useAuthStore.getState().emailofUser as string; // ✅ Get email from AuthStore
+  const email = useAuthStore.getState().user?.email as string; // ✅ Get email from AuthStore
   const verifyOtp = useAuthStore((state) => state.verify);
   const navigate = useNavigate();
 
   const handleVerify = async () => {
     setError("");
-
-    // ✅ Check if email is available
-    // if (!email) {
-    //   setError("Email is missing. Please log in again.");
-    //   return;
-    // }
-
     
     setLoading(true);
     try {
