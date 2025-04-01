@@ -44,49 +44,62 @@ export default function Login() {
       <Card className="w-96 p-6 shadow-lg">
         <CardContent>
           <h2 className="text-xl font-bold mb-4 text-center">Login</h2>
-
+  
           {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-
-          <div className='grid w-full items-center gap-8'>
-                <div className="flex flex-col space-y-1.5 mt-4">
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                    type="email" 
-                    placeholder="Enter your email" 
-                    {...register('email')}
-                    />
-                    {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-                </div>
-
-                <div className="flex flex-col space-y-1.5 mb-4">
-                    <Label>Password</Label>
-                    <Input 
-                    type="password" 
-                    placeholder="Enter your password" 
-                    {...register('password')}
-                />
-                    {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-                </div>
+  
+          <div className="grid w-full items-center gap-8">
+            {/* Email Input */}
+            <div className="flex flex-col space-y-1.5 mt-4">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              )}
+            </div>
+  
+            {/* Password Input with Forgot Password Link */}
+            <div className="flex flex-col space-y-1.5 mb-1">
+              <Label>Password</Label>
+              <Input
+                type="password"
+                placeholder="Enter your password"
+                {...register("password")}
+              />
+              {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password.message}</p>
+              )}
+  
+              {/* Forgot Password Link */}
+              <p
+                className="text-sm text-blue-500 cursor-pointer text-right"
+                onClick={() => navigate("/forgot-password")}
+              >
+                Forgot Password?
+              </p>
+            </div>
           </div>
-
+  
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? "Logging in..." : "Login"}
           </Button>
-
+  
           <p className="text-sm text-center mt-3">
-            Don't have an account? 
-            <span 
-              className="text-blue-500 cursor-pointer ml-1" 
-              onClick={() => navigate('/register')}
+            Don't have an account?
+            <span
+              className="text-blue-500 cursor-pointer ml-1"
+              onClick={() => navigate("/register")}
             >
               Sign up
             </span>
           </p>
         </CardContent>
-
-        
       </Card>
     </div>
-    </form>
+  </form>
+  
   );
 }

@@ -260,13 +260,21 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
 export const resetPassword = async (req: Request, res: Response) => {
   try {
-    const token = req.query.token as string;
+    const token = req.headers.authorization?.split(" ")[1]; // Extract token from Bearer
+
+    if (!token) {
+      res.status(400).json({
+        success: false,
+        message: 'Token not provided',
+      });
+      return;
+    }
 
     const { newPassword, confirmPassword } = req.body;
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
       email: string;
-    };
+    };  
 
     const user = await prisma.user.findUnique({
       where: {

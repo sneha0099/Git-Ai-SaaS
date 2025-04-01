@@ -77,7 +77,7 @@ const useAuthStore = create<AuthState>()(
 
       forgotPassword: async (email) => {
         try {
-          await axios.post("/api/forgot-password", { email });
+          await axios.post("http://localhost:3000/api/v1/auth/forgot-password", { email });
         } catch (error) {
           console.error("Forgot password failed:", error);
           throw error;
@@ -85,11 +85,17 @@ const useAuthStore = create<AuthState>()(
       },
 
       resetPassword: async (token, newPassword, confirmPassword) => {
+        console.log(token, newPassword, confirmPassword);
+        
         try {
-          await axios.post("/api/reset-password", {
-            token,
+          await axios.post("http://localhost:3000/api/v1/auth/reset-password", {
             newPassword,
             confirmPassword,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
         } catch (error) {
           console.error("Reset password failed:", error);
