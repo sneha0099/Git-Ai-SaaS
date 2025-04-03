@@ -1,130 +1,136 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import axios from "axios";
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import axios from 'axios';
 
 interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
 }
 
 interface AuthState {
-  // emailofUser: string | null;
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string
-  ) => Promise<void>;
-  logout: () => void;
-  forgotPassword: (email: string) => Promise<void>;
-  resetPassword: (
-    token: string,
-    newPassword: string,
-    confirmPassword: string
-  ) => Promise<void>;
+    // emailofUser: string | null;
+    user: User | null;
+    token: string | null;
+    isAuthenticated: boolean;
+    login: (email: string, password: string) => Promise<void>;
+    register: (
+        firstName: string,
+        lastName: string,
+        email: string,
+        password: string
+    ) => Promise<void>;
+    logout: () => void;
+    forgotPassword: (email: string) => Promise<void>;
+    resetPassword: (
+        token: string,
+        newPassword: string,
+        confirmPassword: string
+    ) => Promise<void>;
     verify: (email: string, otp: string) => Promise<void>;
 }
 
 const useAuthStore = create<AuthState>()(
-  persist<AuthState>(
-    (set) => ({
-      emailofUser: null,
-      user: null,
-      token: null,
-      isAuthenticated: false,
+    persist<AuthState>(
+        (set) => ({
+            emailofUser: null,
+            user: null,
+            token: null,
+            isAuthenticated: false,
 
-      login: async (email, password) => {
-        try {
-          const response = await axios.post(
-            "http://localhost:3000/api/v1/auth/login",
-            { email, password }
-          );
-          const { data, token } = response.data;
-          axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          set({ user: data,token, isAuthenticated: true });
-          
-        } catch (error) {
-          console.error("Login failed:", error);
-          throw error;
-        }
-      },
-
-      register: async (firstName, lastName, email, password) => {
-        try {
-          const response = await axios.post(
-            "http://localhost:3000/api/v1/auth/register",
-            { firstName, lastName, email, password }
-          );
-          const { data } = response.data;
-    
-          set({ user:data });
-        } catch (error) {
-          console.error("Registration failed:", error);
-          throw error;
-        }
-      },
-
-      logout: () => {
-        set({ user: null, token: null, isAuthenticated: false });
-        // Optionally clear cookies or tokens from storage
-      },
-
-      forgotPassword: async (email) => {
-        try {
-          await axios.post("http://localhost:3000/api/v1/auth/forgot-password", { email });
-        } catch (error) {
-          console.error("Forgot password failed:", error);
-          throw error;
-        }
-      },
-
-      resetPassword: async (token, newPassword, confirmPassword) => {
-        console.log(token, newPassword, confirmPassword);
-        
-        try {
-          await axios.post("http://localhost:3000/api/v1/auth/reset-password", {
-            newPassword,
-            confirmPassword,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
+            login: async (email, password) => {
+                try {
+                    const response = await axios.post(
+                        'http://localhost:3000/api/v1/auth/login',
+                        { email, password }
+                    );
+                    const { data, token } = response.data;
+                    axios.defaults.headers.common['Authorization'] =
+                        `Bearer ${token}`;
+                    set({ user: data, token, isAuthenticated: true });
+                } catch (error) {
+                    console.error('Login failed:', error);
+                    throw error;
+                }
             },
-          });
-        } catch (error) {
-          console.error("Reset password failed:", error);
-          throw error;
-        }
-      },
 
-      verify: async (email ,otp) => {
-        try {
-          //const userEmail = useAuthStore.getState().user?.email  || email; // ✅ Get email from AuthStore
+            register: async (firstName, lastName, email, password) => {
+                try {
+                    const response = await axios.post(
+                        'http://localhost:3000/api/v1/auth/register',
+                        { firstName, lastName, email, password }
+                    );
+                    const { data } = response.data;
 
-          console.log(email, otp);
-          const response = await axios.post(
-            "http://localhost:3000/api/v1/auth/verify",
-            { email, otp }
-          );
-          const { user } = response.data;
-          set({ user });
-        } catch (error) {
-          console.error("Verify failed:", error);
-          throw error;
+                    set({ user: data });
+                } catch (error) {
+                    console.error('Registration failed:', error);
+                    throw error;
+                }
+            },
+
+            logout: () => {
+                set({ user: null, token: null, isAuthenticated: false });
+                // Optionally clear cookies or tokens from storage
+            },
+
+            forgotPassword: async (email) => {
+                try {
+                    await axios.post(
+                        'http://localhost:3000/api/v1/auth/forgot-password',
+                        { email }
+                    );
+                } catch (error) {
+                    console.error('Forgot password failed:', error);
+                    throw error;
+                }
+            },
+
+            resetPassword: async (token, newPassword, confirmPassword) => {
+                console.log(token, newPassword, confirmPassword);
+
+                try {
+                    await axios.post(
+                        'http://localhost:3000/api/v1/auth/reset-password',
+                        {
+                            newPassword,
+                            confirmPassword,
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+                } catch (error) {
+                    console.error('Reset password failed:', error);
+                    throw error;
+                }
+            },
+
+            verify: async (email, otp) => {
+                try {
+                    //const userEmail = useAuthStore.getState().user?.email  || email; // ✅ Get email from AuthStore
+
+                    console.log(email, otp);
+                    const response = await axios.post(
+                        'http://localhost:3000/api/v1/auth/verify',
+                        { email, otp }
+                    );
+                    const { user } = response.data;
+                    set({ user });
+                } catch (error) {
+                    console.error('Verify failed:', error);
+                    throw error;
+                }
+            },
+        }),
+        {
+            name: 'auth-storage', // ✅ Unique key to store in localStorage
+            storage: createJSONStorage(() => localStorage), // ✅ Use localStorage
         }
-      },
-    }),
-    {
-      name: "auth-storage", // ✅ Unique key to store in localStorage
-      storage: createJSONStorage(() => localStorage), // ✅ Use localStorage
-    }
-  )
+    )
 );
 
 export default useAuthStore;

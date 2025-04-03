@@ -1,6 +1,5 @@
+import js from '@eslint/js';
 import globals from 'globals';
-import react from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
 import prettier from 'eslint-plugin-prettier';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
@@ -10,37 +9,27 @@ export default [
         ignores: ['dist', 'node_modules'],
     },
     {
-        files: ['**/*.{ts,tsx,js,jsx}'],
+        files: ['**/*.{ts,js}'],
         languageOptions: {
             ecmaVersion: 2021,
             sourceType: 'module',
             parser: tsParser,
-            globals: globals.browser,
+            globals: globals.node,
         },
         plugins: {
-            react,
-            'react-hooks': reactHooks,
             '@typescript-eslint': tseslint,
             prettier,
         },
         rules: {
-            ...react.configs.recommended.rules,
-            ...reactHooks.configs.recommended.rules,
+            ...js.configs.recommended.rules,
             ...tseslint.configs.recommended.rules,
             'prettier/prettier': 'error',
-            'react/react-in-jsx-scope': 'off', // Not needed for React 17+
-            'react/prop-types': 'off', // Disable prop-types as we use TypeScript
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 { argsIgnorePattern: '^_' },
             ],
             'no-console': 'warn',
             'no-debugger': 'error',
-        },
-        settings: {
-            react: {
-                version: 'detect',
-            },
         },
     },
 ];

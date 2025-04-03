@@ -3,30 +3,30 @@ import { generateOtp } from './generateOtp';
 import prisma from '../config/db';
 
 export const sendOtpMail = async (email: string) => {
-  try {
-    const { otp, expiresAt } = generateOtp();
+    try {
+        const { otp, expiresAt } = generateOtp();
 
-    await prisma.otp.upsert({
-      where: { email },
-      update: { otp, expiresAt },
-      create: { email, otp, expiresAt },
-    });
+        await prisma.otp.upsert({
+            where: { email },
+            update: { otp, expiresAt },
+            create: { email, otp, expiresAt },
+        });
 
-    const userName = email.split('@')[0];
+        const userName = email.split('@')[0];
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.ADMIN_EMAIL,
-        pass: process.env.ADMIN_PASSWORD,
-      },
-    });
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.ADMIN_EMAIL,
+                pass: process.env.ADMIN_PASSWORD,
+            },
+        });
 
-    const mailOptions = {
-      from: process.env.ADMIN_EMAIL,
-      to: email,
-      subject: 'Your OTP code',
-      html: `
+        const mailOptions = {
+            from: process.env.ADMIN_EMAIL,
+            to: email,
+            subject: 'Your OTP code',
+            html: `
     <!DOCTYPE html>
     <html lang="en">
       <head>
@@ -60,12 +60,12 @@ export const sendOtpMail = async (email: string) => {
       </body>
     </html>
   `,
-    };
+        };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`OTP sent successfully to ${email}`);
-  } catch (error) {
-    console.error('Error sending OTP email:', error);
-    throw new Error('Failed to send OTP email');
-  }
+        await transporter.sendMail(mailOptions);
+        console.log(`OTP sent successfully to ${email}`);
+    } catch (error) {
+        console.error('Error sending OTP email:', error);
+        throw new Error('Failed to send OTP email');
+    }
 };

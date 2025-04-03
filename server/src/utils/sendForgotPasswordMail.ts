@@ -3,27 +3,27 @@ import { generateOtp } from './generateOtp';
 import prisma from '../config/db';
 
 export const sendforgotPasswordMail = async (
-  email: string,
-  forgotPasswordToken: string,
+    email: string,
+    forgotPasswordToken: string
 ) => {
-  try {
-    const userName = email.split('@')[0];
+    try {
+        const userName = email.split('@')[0];
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.ADMIN_EMAIL,
-        pass: process.env.ADMIN_PASSWORD,
-      },
-    });
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.ADMIN_EMAIL,
+                pass: process.env.ADMIN_PASSWORD,
+            },
+        });
 
-    const resetLink = `${process.env.FRONTEND_URL}/api/v1/auth/reset-password?token=${forgotPasswordToken}`;
+        const resetLink = `${process.env.FRONTEND_URL}/api/v1/auth/reset-password?token=${forgotPasswordToken}`;
 
-    const mailOptions = {
-      from: process.env.ADMIN_EMAIL,
-      to: email,
-      subject: 'Reset Your Password - Ai-GitSaas',
-      html: `
+        const mailOptions = {
+            from: process.env.ADMIN_EMAIL,
+            to: email,
+            subject: 'Reset Your Password - Ai-GitSaas',
+            html: `
     <!DOCTYPE html>
     <html lang="en">
       <head>
@@ -56,12 +56,12 @@ export const sendforgotPasswordMail = async (
       </body>
     </html>
   `,
-    };
+        };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`Forgot Password email sent successfully to ${email}`);
-  } catch (error) {
-    console.error('Error sending OTP email:', error);
-    throw new Error('Failed to send OTP email');
-  }
+        await transporter.sendMail(mailOptions);
+        console.log(`Forgot Password email sent successfully to ${email}`);
+    } catch (error) {
+        console.error('Error sending OTP email:', error);
+        throw new Error('Failed to send OTP email');
+    }
 };

@@ -1,19 +1,19 @@
 import express from 'express';
 import validate from '../middlewares/validate.middleware';
 import {
-  Register,
-  Login,
-  Verify,
-  Logout,
-  forgotPassword,
-  resetPassword,
-  resendOtp,
+    Register,
+    Login,
+    Verify,
+    Logout,
+    forgotPassword,
+    resetPassword,
+    resendOtp,
 } from '../controllers/user.controller';
 import {
-  RegisterSchema,
-  LoginSchema,
-  ForgotPasswordSchema,
-  ResetPasswordSchema,
+    RegisterSchema,
+    LoginSchema,
+    ForgotPasswordSchema,
+    ResetPasswordSchema,
 } from '../validators/authSchema';
 import { auth } from '../middlewares/auth.middleware';
 
