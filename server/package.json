@@ -2,7 +2,6 @@
     "name": "server",
     "version": "1.0.0",
     "main": "index.js",
-    "type": "module",
     "scripts": {
         "build": "tsc -b",
         "start": "node dist/index.js",
@@ -15,7 +14,7 @@
     "license": "ISC",
     "description": "",
     "dependencies": {
-        "@prisma/client": "^6.4.1",
+        "@prisma/client": "^6.5.0",
         "bcryptjs": "^3.0.2",
         "cookie-parser": "^1.4.7",
         "cors": "^2.8.5",
@@ -45,7 +44,7 @@
         "nodemon": "^3.1.9",
         "prettier": "^3.5.3",
         "ts-node": "^10.9.2",
-        "typescript": "^5.7.3",
+        "typescript": "^5.8.2",
         "typescript-eslint": "^8.25.0"
     }
 }
