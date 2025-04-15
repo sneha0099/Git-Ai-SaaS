@@ -8,21 +8,21 @@ import {
     forgotPassword,
     resetPassword,
     resendOtp,
-} from '../controllers/user.controller';
+} from '../controllers/auth.controller';
 import {
     RegisterSchema,
     LoginSchema,
     ForgotPasswordSchema,
     ResetPasswordSchema,
 } from '../validators/authSchema';
-import { auth } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 
 const router = express.Router();
 
 router.post('/register', validate(RegisterSchema), Register);
 router.post('/login', validate(LoginSchema), Login);
 router.post('/verify', Verify);
-router.post('/logout', auth, Logout);
+router.post('/logout', authMiddleware, Logout);
 router.post('/forgot-password', validate(ForgotPasswordSchema), forgotPassword);
 router.post('/reset-password', validate(ResetPasswordSchema), resetPassword);
 router.post('/resend-otp', validate(ForgotPasswordSchema), resendOtp);

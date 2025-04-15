@@ -1,29 +1,23 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { connectDB } from './config/db';
-import authRoute from './routes/auth.route';
-import cookieParser from 'cookie-parser';
+import app from './app';
+import colors from 'colors';
+import prisma from './config/prismaClient';
+import { PORT } from './config/serverConfig';
 
-dotenv.config();
+const startServer = async () => {
+    try {
+        await prisma.$connect();
+        console.log(
+            colors.bold.italic.underline('Database connected successfully')
+        );
+        app.listen(PORT, () =>
+            console.log(
+                colors.green.bold.underline(`Server is running on port ${PORT}`)
+            )
+        );
+    } catch (error) {
+        console.log('Error connecting to database: ', error);
+        process.exit(1);
+    }
+};
 
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-app.use(cookieParser());
-
-connectDB();
-
-app.get('/', (req, res) => {
-    res.json({
-        success: true,
-        message: 'Server is UP and runnnningggg',
-    });
-});
-
-app.use(`/api/v1/auth`, authRoute);
-
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on http://localhost:${process.env.PORT}`);
-});
+startServer();

@@ -1,15 +1,15 @@
 import nodemailer from 'nodemailer';
 import { generateOtp } from './generateOtp';
-import prisma from '../config/db';
+import prisma from '../config/prismaClient';
 
-export const sendOtpMail = async (email: string) => {
+export const sendOtpMail = async (id: string, email: string) => {
     try {
         const { otp, expiresAt } = generateOtp();
 
         await prisma.otp.upsert({
-            where: { email },
-            update: { otp, expiresAt },
-            create: { email, otp, expiresAt },
+            where: { userId: id },
+            update: { otp: Number(otp), expiresAt },
+            create: { userId: id, otp: Number(otp), expiresAt },
         });
 
         const userName = email.split('@')[0];

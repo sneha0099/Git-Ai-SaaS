@@ -1,6 +1,4 @@
 import nodemailer from 'nodemailer';
-import { generateOtp } from './generateOtp';
-import prisma from '../config/db';
 
 export const sendforgotPasswordMail = async (
     email: string,
