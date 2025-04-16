@@ -1,10 +1,7 @@
 import prisma from '../config/prismaClient';
 import { Request, Response, NextFunction } from 'express';
-import bcrypt from 'bcryptjs';
 import { sendOtpMail } from '../utils/sendOtpMailer';
 import { sendforgotPasswordMail } from '../utils/sendForgotPasswordMail';
-import { generateOtp } from '../utils/generateOtp';
-import jwt from 'jsonwebtoken';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 import {
@@ -12,6 +9,7 @@ import {
     COOKIE_OPTIONS,
     HASH_PASSWORD,
     JWT_SIGN,
+    JWT_VERIFY,
 } from '../utils/constant';
 
 export const Register = async (
@@ -157,16 +155,11 @@ export const Logout = async (
     next: NextFunction
 ): Promise<void> => {
     try {
-        res.clearCookie('token', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production' ? true : false, // Secure only in production
-            sameSite: 'strict',
-        });
-
-        res.status(200).json({
-            success: true,
-            message: 'Logged out successfully',
-        });
+        res.clearCookie('token', COOKIE_OPTIONS)
+            .status(200)
+            .json(
+                new ApiResponse(200, {}, 'You have successfully logged out.')
+            );
     } catch (error) {
         next(error);
     }
@@ -187,32 +180,20 @@ export const forgotPassword = async (
         });
 
         if (!user) {
-            res.status(400).json({
-                success: false,
-                message: 'User not found',
-            });
-            return;
+            throw new ApiError(404, 'User not found');
         }
 
-        const resetToken = jwt.sign(
-            { email },
-            process.env.JWT_SECRET as string,
-            {
-                expiresIn: '15m',
-            }
-        );
-
-        console.log(resetToken);
+        const resetToken = await JWT_SIGN(user.id, user.email, '15m');
 
         await sendforgotPasswordMail(email, resetToken);
 
-        res.status(200).json({
-            success: true,
-            message: 'Password reset email sent successfully',
-            data: {
-                resetToken,
-            },
-        });
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                {},
+                'Password reset email sent successfully. Please check your inbox.'
+            )
+        );
     } catch (error) {
         next(error);
     }
@@ -224,59 +205,51 @@ export const resetPassword = async (
     next: NextFunction
 ): Promise<void> => {
     try {
-        const token = req.headers.authorization?.split(' ')[1]; // Extract token from Bearer
+        const { token, newPassword, confirmPassword } = req.body;
 
         if (!token) {
-            res.status(400).json({
-                success: false,
-                message: 'Token not provided',
-            });
-            return;
+            throw new ApiError(401, 'Token not provided');
         }
 
-        const { newPassword, confirmPassword } = req.body;
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-            email: string;
-        };
+        const decoded = await JWT_VERIFY(token);
+        if (!decoded) {
+            throw new ApiError(401, 'Invalid reset token');
+        }
 
         const user = await prisma.user.findUnique({
             where: {
-                email: decoded.email,
+                id: decoded.id,
             },
         });
-
         if (!user) {
-            res.status(400).json({
-                success: false,
-                message: 'User not found',
-            });
-            return;
+            throw new ApiError(404, 'User not found');
         }
 
         if (newPassword !== confirmPassword) {
-            res.status(400).json({
-                success: false,
-                message: 'Passwords do not match',
-            });
-            return;
+            throw new ApiError(
+                400,
+                'New password and confirm password do not match'
+            );
         }
 
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const hashedPassword = await HASH_PASSWORD(newPassword);
 
         await prisma.user.update({
             where: {
-                email: decoded.email,
+                id: decoded.id,
             },
             data: {
                 password: hashedPassword,
             },
         });
 
-        res.status(200).json({
-            success: true,
-            message: 'Password reset successfully',
-        });
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                {},
+                'Password reset successfully. You can now log in with your new password.'
+            )
+        );
     } catch (error) {
         next(error);
     }
@@ -288,36 +261,27 @@ export const resendOtp = async (
     next: NextFunction
 ): Promise<void> => {
     try {
-        const { email } = req.body;
+        const { userId } = req.body;
 
         const user = await prisma.user.findUnique({
             where: {
-                email,
+                id: userId,
             },
         });
 
         if (!user) {
-            res.status(400).json({
-                success: false,
-                message: 'User not found',
-            });
-            return;
+            throw new ApiError(404, 'User not found');
         }
 
-        const { otp, expiresAt } = generateOtp();
+        await sendOtpMail(userId, user.email); //can set rate limit
 
-        await prisma.otp.upsert({
-            where: { email },
-            update: { otp, expiresAt },
-            create: { email, otp, expiresAt },
-        });
-
-        await sendOtpMail(email);
-
-        res.status(200).json({
-            success: true,
-            message: 'OTP sent successfully',
-        });
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                {},
+                'OTP resent successfully. Please check your email.'
+            )
+        );
     } catch (error) {
         next(error);
     }

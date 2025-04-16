@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { TOKEN_EXPIRY, TOKEN_SECRET } from '../config/serverConfig';
+import { TOKEN_SECRET } from '../config/serverConfig';
 import { CookieOptions } from 'express';
 
 export const HASH_PASSWORD = async (password: string) => {
@@ -15,17 +15,26 @@ export const COMPARE_PASSWORD = async (
     return await bcrypt.compare(password, hashedPassword);
 };
 
-export const JWT_SIGN = async (userId: string, userEmail: string) => {
-    return await jwt.sign(
+export const JWT_SIGN = async (
+    userId: string,
+    userEmail: string,
+    expiresIn: string = '1d'
+) => {
+    const token = jwt.sign(
         {
             id: userId,
             email: userEmail,
         },
-        TOKEN_SECRET as jwt.Secret,
+        TOKEN_SECRET as string,
         {
-            expiresIn: parseInt(TOKEN_EXPIRY as string, 10),
-        }
+            expiresIn,
+        } as jwt.SignOptions
     );
+    return token;
+};
+
+export const JWT_VERIFY = async (token: string) => {
+    return (await jwt.verify(token, TOKEN_SECRET as string)) as jwt.JwtPayload;
 };
 
 export const COOKIE_OPTIONS: CookieOptions = {
