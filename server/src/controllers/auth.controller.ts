@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import { sendOtpMail } from '../utils/sendOtpMailer';
 import { sendforgotPasswordMail } from '../utils/sendForgotPasswordMail';
-import { generateOtp } from '../utils/generateOtp';
+//import { generateOtp } from '../utils/generateOtp';
 import jwt from 'jsonwebtoken';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
@@ -304,15 +304,20 @@ export const resendOtp = async (
             return;
         }
 
-        const { otp, expiresAt } = generateOtp();
+        // const { otp, expiresAt } = generateOtp();
+        // const numericOtp = parseInt(otp);
 
-        await prisma.otp.upsert({
-            where: { email },
-            update: { otp, expiresAt },
-            create: { email, otp, expiresAt },
-        });
+        // await prisma.otp.upsert({
+        //     where: { userId: user.id },
+        //     update: { otp: numericOtp, expiresAt },
+        //     create: {
+        //       userId: user.id,
+        //       otp: numericOtp,
+        //       expiresAt,
+        //     },
+        //   });
 
-        await sendOtpMail(email);
+        await sendOtpMail(user.id, email);
 
         res.status(200).json({
             success: true,
