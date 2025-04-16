@@ -58,9 +58,7 @@ export const sendforgotPasswordMail = async (
         };
 
         await transporter.sendMail(mailOptions);
-        console.log(`Forgot Password email sent successfully to ${email}`);
-    } catch (error) {
-        console.error('Error sending OTP email:', error);
+    } catch {
         throw new Error('Failed to send OTP email');
     }
 };
