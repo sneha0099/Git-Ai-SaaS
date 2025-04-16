@@ -1,35 +1,19 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
 import compression from 'compression';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import errorHandler from './middlewares/errorHandler.middleware';
 import { ApiError } from './utils/ApiError';
-import { API_VERSION, FRONTEND_ORIGIN } from './config/serverConfig';
+import { API_VERSION } from './config/serverConfig';
 import authRouter from './routes/auth.route';
+import { corsOptions } from './utils/constant';
 
 const app = express();
 
-const corsOptions = {
-    origin: [FRONTEND_ORIGIN],
-    methods: 'GET,PUT,PATCH,POST,DELETE',
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    optionsSuccessStatus: 204, // For legacy browsers
-    maxAge: 86400, // Cache preflight request results for 1 day (in seconds)
-};
 //CORS Middleware
 app.use(cors(corsOptions));
-
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per windowMs
-    message: 'Too many requests, please try again later.',
-});
-//Rate Limiting Middleware
-app.use(limiter);
 
 //Body Parser Middleware
 app.use(express.json()); // Parses incoming requests with JSON payloads

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { TOKEN_SECRET } from '../config/serverConfig';
+import { FRONTEND_ORIGIN, TOKEN_SECRET } from '../config/serverConfig';
 import { CookieOptions } from 'express';
 
 export const HASH_PASSWORD = async (password: string) => {
@@ -41,4 +41,13 @@ export const COOKIE_OPTIONS: CookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production' ? true : false,
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for production, 'lax' for local
+};
+
+export const corsOptions = {
+    origin: [FRONTEND_ORIGIN],
+    methods: 'GET,PUT,PATCH,POST,DELETE',
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 204, // For legacy browsers
+    maxAge: 86400, // Cache preflight request results for 1 day (in seconds)
 };
