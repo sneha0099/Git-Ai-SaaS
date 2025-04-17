@@ -10,6 +10,11 @@
         "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
         "preview": "vite preview"
     },
+    "config": {
+        "commitizen": {
+            "path": "./client/node_modules/cz-conventional-changelog"
+        }
+    },
     "dependencies": {
         "@clerk/clerk-react": "^5.24.1",
         "@hookform/resolvers": "^4.1.3",
