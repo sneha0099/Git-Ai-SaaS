@@ -4,7 +4,7 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 const DATABASE_URL = process.env.DATABASE_URL;
 const API_VERSION = process.env.API_VERSION || 'v1';
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:3000';
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
 const TOKEN_SECRET = process.env.TOKEN_SECRET || 'secret';
 const TOKEN_EXPIRY = process.env.TOKEN_EXPIRY || '1h';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
