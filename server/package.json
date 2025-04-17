@@ -8,7 +8,8 @@
         "dev": "nodemon --watch src --ext ts --exec \"npm run build && node dist/index.js\"",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-        "commit": "cz"
+        "commit": "cz",
+        "prepare": "husky install"
     },
     "keywords": [],
     "author": "",
