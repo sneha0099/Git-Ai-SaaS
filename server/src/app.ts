@@ -30,7 +30,7 @@ app.use(compression());
 
 //Security Middleware
 app.use(helmet());
-
+//dasdasdasd
 app.use(`/api/${API_VERSION}/auth`, authRouter);
 
 app.get('/health', (req: Request, res: Response) => {
