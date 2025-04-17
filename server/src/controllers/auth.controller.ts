@@ -97,6 +97,8 @@ export const Verify = async (
     try {
         const { otp, userId } = req.body;
 
+        const parsedOtp = parseInt(otp, 10);
+
         const otpRecord = await prisma.otp.findUnique({ where: { userId } });
 
         if (!otpRecord) {
@@ -110,7 +112,7 @@ export const Verify = async (
             );
         }
 
-        if (otp !== otpRecord.otp) {
+        if (parsedOtp !== otpRecord.otp) {
             throw new ApiError(400, 'Invalid OTP provided.');
         }
 
