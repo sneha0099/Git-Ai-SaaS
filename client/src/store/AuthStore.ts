@@ -217,6 +217,7 @@ const useAuthStore = create<AuthState>()(
             },
 
             verify: async (otp, userId) => {
+                console.log(otp, userId, `store`);
                 const { user } = await verifyOtp(otp, userId);
                 set({ user });
             },

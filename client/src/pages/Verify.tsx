@@ -88,6 +88,7 @@ import {
 } from '@/components/ui/input-otp';
 import { Button } from '@/components/ui/button';
 import useAuthStore from '../store/AuthStore'; // adjust path
+import { useNavigate } from 'react-router-dom';
 //import { resendOtp } from '../services/authService'; // service we'll create
 
 export default function VerifyPage() {
@@ -96,12 +97,13 @@ export default function VerifyPage() {
     const [error, setError] = useState('');
     const [resendMessage, setResendMessage] = useState('');
     const [cooldown, setCooldown] = useState(0);
+    const navigate = useNavigate();
 
     const verify = useAuthStore((state) => state.verify);
     const resendOtp = useAuthStore((state) => state.resendOtp);
     const userId = useAuthStore((state) => state.user?.id as string);
 
-    console.log(userId);
+    // console.log(userId);
 
     useEffect(() => {
         if (cooldown > 0) {
@@ -118,7 +120,13 @@ export default function VerifyPage() {
                 setError('User ID missing.');
                 return;
             }
+            console.log(otp, userId, 'page');
             await verify(otp, userId);
+            setResendMessage('OTP verified successfully!');
+
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 1000); // 1s delay
         } catch (err: any) {
             setError(err?.response?.data?.message || 'Verification failed.');
         } finally {

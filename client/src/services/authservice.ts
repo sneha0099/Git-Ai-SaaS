@@ -35,16 +35,15 @@ export const resetPassword = async (
     newPassword: string,
     confirmPassword: string
 ) => {
-    await axios.post(
-        `${API}/auth/reset-password`,
-        { newPassword, confirmPassword },
-        {
-            headers: { Authorization: `Bearer ${token}` },
-        }
-    );
+    await axios.post(`${API}/auth/reset-password`, {
+        token,
+        newPassword,
+        confirmPassword,
+    });
 };
 
 export const verifyOtp = async (otp: string, userId: string) => {
+    console.log(otp, userId, `service`);
     const response = await axios.post(`${API}/auth/verify`, { otp, userId });
     return response.data;
 };

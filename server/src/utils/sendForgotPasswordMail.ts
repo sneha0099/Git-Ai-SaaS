@@ -16,7 +16,7 @@ export const sendforgotPasswordMail = async (
             },
         });
 
-        const resetLink = `${process.env.FRONTEND_URL}/api/${API_VERSION}/auth/reset-password?token=${forgotPasswordToken}`;
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${forgotPasswordToken}`;
 
         const mailOptions = {
             from: process.env.ADMIN_EMAIL,
