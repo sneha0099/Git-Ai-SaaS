@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,6 +16,14 @@ export default function Login() {
     //const [auth, setAuth] = useRecoilState(authState);
     const navigate = useNavigate();
     const loginUser = useAuthStore((state) => state.login);
+
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/dashboard');
+        }
+    }, [isAuthenticated, navigate]);
 
     const {
         register,

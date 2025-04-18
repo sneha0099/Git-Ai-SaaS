@@ -3,6 +3,7 @@ import PrivateRoute from './components/PrivateRoute';
 import ConditionalRoute from './components/ConditionalRoute';
 import PublicRoute from './components/PublicRoute'; // ✅ Import PublicRoute
 import useAuthStore from './store/useAuthStore';
+import ProtectedRoute from './Protected';
 
 import Homepage from '../pages/Homepage';
 import Login from '../pages/Login';
@@ -52,8 +53,13 @@ const AppRouter = () => {
                 </Route>
 
                 {/* 🔒 Fully Protected Routes - Requires Authentication */}
-                <Route element={<PrivateRoute />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
+                <Route>
+                    element=
+                    {
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
                 </Route>
             </Routes>
         </Router>

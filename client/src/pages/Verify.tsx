@@ -79,7 +79,7 @@
 //     );
 // }
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import {
     InputOTP,
     InputOTPGroup,
@@ -104,6 +104,11 @@ export default function VerifyPage() {
     const userId = useAuthStore((state) => state.user?.id as string);
 
     // console.log(userId);
+    useEffect(() => {
+        if (!userId) {
+            navigate('/login');
+        }
+    }, [userId, navigate]);
 
     useEffect(() => {
         if (cooldown > 0) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,12 @@ export default function ResetPassword() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token'); // ✅ Get token from URL
+
+    useEffect(() => {
+        if (!token) {
+            navigate('/login');
+        }
+    }, [token, navigate]);
 
     // ✅ Use useForm for validation
     const {

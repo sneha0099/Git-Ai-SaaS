@@ -202,6 +202,7 @@ const useAuthStore = create<AuthState>()(
 
             logout: () => {
                 set({ user: null, token: null, isAuthenticated: false });
+                console.log('logout ran');
             },
 
             resendOtp: async (userId) => {

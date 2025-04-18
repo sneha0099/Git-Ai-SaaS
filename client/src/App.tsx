@@ -7,6 +7,8 @@ import Verify from './pages/Verify';
 import ForgotPassword from './pages/Forgotpassword';
 import ResetPassword from './pages/Resetpassword';
 import { Routes, Route } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import ProtectedRoute from './routes/Protected';
 //import AuthPage from '@/pages/AuthPage';
 //import LogoutButton from '@/components/LogoutButton';
 
@@ -20,6 +22,10 @@ export default function App() {
                 <Route path="/verify" element={<Verify />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                </Route>
                 {/* Add more routes as needed */}
             </Routes>
         </RecoilRoot>
