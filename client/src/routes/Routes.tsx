@@ -2,7 +2,7 @@ import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute';
 import ConditionalRoute from './components/ConditionalRoute';
 import PublicRoute from './components/PublicRoute'; // ✅ Import PublicRoute
-import useAuthStore from './store/useAuthStore';
+import useAuthStore from './store/AuthStore';
 import ProtectedRoute from './Protected';
 
 import Homepage from '../pages/Homepage';
@@ -12,6 +12,7 @@ import Verify from '../pages/Verify';
 import ForgotPassword from '../pages/Forgotpassword';
 import ResetPassword from '../pages/Resetpassword';
 import Dashboard from '../pages/Dashboard';
+import Sidebar from '../components/Sidebar';
 
 const AppRouter = () => {
     const { isVerifying, isResettingPassword } = useAuthStore();
@@ -53,14 +54,17 @@ const AppRouter = () => {
                 </Route>
 
                 {/* 🔒 Fully Protected Routes - Requires Authentication */}
-                <Route>
-                    element=
-                    {
+                <Route
+                    path="/dashboard"
+                    element={
                         <ProtectedRoute>
-                            <Dashboard />
+                            <div className="flex">
+                                <Sidebar />
+                                <Dashboard />
+                            </div>
                         </ProtectedRoute>
                     }
-                </Route>
+                />
             </Routes>
         </Router>
     );
