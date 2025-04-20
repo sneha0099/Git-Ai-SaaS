@@ -4,7 +4,7 @@ import ConditionalRoute from './components/ConditionalRoute';
 import PublicRoute from './components/PublicRoute'; // ✅ Import PublicRoute
 import useAuthStore from './store/AuthStore';
 import ProtectedRoute from './Protected';
-
+import Layout from '../components/Layout';
 import Homepage from '../pages/Homepage';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
@@ -58,10 +58,10 @@ const AppRouter = () => {
                     path="/dashboard"
                     element={
                         <ProtectedRoute>
-                            <div className="flex">
-                                <Sidebar />
-                                <Dashboard />
-                            </div>
+                            <Layout>
+                                <div>This is temporary child</div>{' '}
+                                {/* 👈 satisfies the `children` prop */}
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />
