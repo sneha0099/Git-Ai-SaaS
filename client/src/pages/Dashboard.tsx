@@ -31,7 +31,7 @@ export default function Dashboard() {
                         className="border p-2 w-full rounded"
                         placeholder="Which file should I edit to change the home page?"
                     />
-                    <Button className="mt-2 w-full">Ask Dionysus!</Button>
+                    <Button className="mt-2 w-full">Ask GitGinie!</Button>
                 </div>
 
                 <div className="bg-white p-4 rounded shadow flex flex-col items-center justify-center">

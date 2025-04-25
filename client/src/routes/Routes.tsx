@@ -82,6 +82,7 @@ import ForgotPassword from '@/pages/Forgotpassword';
 import ResetPassword from '@/pages/Resetpassword';
 import ProtectedRoute from '@/routes/Protected';
 import Layout from '@/components/Layout';
+import Dashboard from '@/pages/Dashboard';
 
 export default function AppRoutes() {
     return (
@@ -99,10 +100,7 @@ export default function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <Layout>
-                            <div>
-                                This is temporary child
-                                <div>hi</div>
-                            </div>
+                            <Dashboard />
                         </Layout>
                     </ProtectedRoute>
                 }
