@@ -66,9 +66,14 @@ export default function AppSidebar() {
         <Sidebar collapsible="icon" variant="floating">
             <SidebarHeader>
                 <div className="flex items-center gap-2">
-                    <img src="/logo.png" alt="logo" width={40} height={40} />
+                    <img
+                        src="/githublogo.png"
+                        alt="logo"
+                        width={60}
+                        height={60}
+                    />
                     {open && (
-                        <h1 className="text-xl font-bold text-primary/80">
+                        <h1 className="text-xl font-bold text-primary/80 ">
                             GitGinie
                         </h1>
                     )}
