@@ -83,6 +83,7 @@ import ResetPassword from '@/pages/Resetpassword';
 import ProtectedRoute from '@/routes/Protected';
 import Layout from '@/components/Layout';
 import Dashboard from '@/pages/Dashboard';
+import Createpage from '@/pages/Createpage';
 
 export default function AppRoutes() {
     return (
@@ -101,6 +102,17 @@ export default function AppRoutes() {
                     <ProtectedRoute>
                         <Layout>
                             <Dashboard />
+                        </Layout>
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/create"
+                element={
+                    <ProtectedRoute>
+                        <Layout>
+                            <Createpage />
                         </Layout>
                     </ProtectedRoute>
                 }
