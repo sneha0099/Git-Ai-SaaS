@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 
 export default function Login() {
     const [loading, setLoading] = useState(false);
@@ -38,10 +39,11 @@ export default function Login() {
         setLoading(true);
         try {
             await loginUser(data.email, data.password);
-            alert('Login successful!');
-            navigate('/');
+            toast.success('Login successful!');
+
+            navigate('/dashboard');
         } catch (error) {
-            alert('Login failed!');
+            toast.error('Login failed!');
             console.log('login failed', error);
         }
 

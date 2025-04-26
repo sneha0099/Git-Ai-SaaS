@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 
 export default function Register() {
     const [loading, setLoading] = useState(false);
@@ -42,10 +43,10 @@ export default function Register() {
                 data.email,
                 data.password
             );
-            alert('Registration successful!');
+            toast.success('Registration successful!');
             navigate('/verify');
         } catch (error) {
-            alert('Registration failed!');
+            toast.error('Registration failed!');
             console.log('Registration failed', error);
         }
 
@@ -73,9 +74,9 @@ export default function Register() {
                                     placeholder="Enter your first name"
                                     {...register('firstName')}
                                 />
-                                {errors.email && (
+                                {errors.firstName && (
                                     <p className="text-red-500 text-sm">
-                                        {errors.email.message}
+                                        {errors.firstName.message}
                                     </p>
                                 )}
                             </div>
@@ -87,9 +88,9 @@ export default function Register() {
                                     placeholder="Enter your last name"
                                     {...register('lastName')}
                                 />
-                                {errors.email && (
+                                {errors.lastName && (
                                     <p className="text-red-500 text-sm">
-                                        {errors.email.message}
+                                        {errors.lastName.message}
                                     </p>
                                 )}
                             </div>

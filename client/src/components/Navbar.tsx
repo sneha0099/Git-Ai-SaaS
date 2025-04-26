@@ -16,7 +16,7 @@ function Navbar() {
                 </Button>
                 <Button
                     className="cursor-pointer"
-                    onClick={() => navigate('/signup')}
+                    onClick={() => navigate('/register')}
                 >
                     Sign Up
                 </Button>
