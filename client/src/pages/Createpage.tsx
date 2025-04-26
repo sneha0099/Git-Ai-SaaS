@@ -18,6 +18,7 @@ function Createpage() {
     }
     return (
         <div className="flex items-center gap-12 h-full justify-center">
+            <img src='/create.png' alt="create" width={400} height={400} />
             <div>
                 <div>
                     <h1 className="font-semibold text-2xl">
