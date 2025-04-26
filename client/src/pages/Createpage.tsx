@@ -39,7 +39,7 @@ function Createpage() {
                         <div className="h-2"></div>
 
                         <Input
-                            {...register('repoUrl', { required: true })}
+                            {...register('repoUrl',{ required: true })}
                             placeholder="GitHub repository URL"
                             type="url"
                             required
