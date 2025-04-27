@@ -1,15 +1,11 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import axios from 'axios';
 import {
     loginUser,
     registerUser,
-    forgotPassword,
-    resetPassword,
     verifyOtp,
-    resendOtp,
     logout,
-} from '../services/authservice'; // adjust this import as per your folder structure
+} from '@/services/authservice'; // ✅ adjust your import
 
 interface User {
     id: string;
@@ -20,7 +16,6 @@ interface User {
 
 interface AuthState {
     user: User | null;
-    token: string | null;
     isAuthenticated: boolean;
     login: (email: string, password: string) => Promise<void>;
     register: (
@@ -29,14 +24,7 @@ interface AuthState {
         email: string,
         password: string
     ) => Promise<void>;
-    logout: () => void;
-    // resendOtp: (userId: string) => Promise<void>;
-    // forgotPassword: (email: string) => Promise<void>;
-    // resetPassword: (
-    //     token: string,
-    //     newPassword: string,
-    //     confirmPassword: string
-    // ) => Promise<void>;
+    logout: () => Promise<void>;
     verify: (otp: string, userId: string) => Promise<void>;
 }
 
@@ -44,14 +32,12 @@ const useAuthStore = create<AuthState>()(
     persist<AuthState>(
         (set) => ({
             user: null,
-            token: null,
             isAuthenticated: false,
 
             login: async (email, password) => {
-                const { data, token } = await loginUser(email, password);
-                axios.defaults.headers.common['Authorization'] =
-                    `Bearer ${token}`;
-                set({ user: data, token, isAuthenticated: true });
+                const { data } = await loginUser(email, password);
+                // No need to set token manually, cookie handles it
+                set({ user: data, isAuthenticated: true });
             },
 
             register: async (firstName, lastName, email, password) => {
@@ -66,7 +52,7 @@ const useAuthStore = create<AuthState>()(
 
             logout: async () => {
                 await logout();
-                set({ user: null, token: null, isAuthenticated: false });
+                set({ user: null, isAuthenticated: false });
             },
 
             verify: async (otp, userId) => {
@@ -77,6 +63,14 @@ const useAuthStore = create<AuthState>()(
         {
             name: 'auth-storage',
             storage: createJSONStorage(() => localStorage),
+            partialize: (state) => ({
+                user: state.user,
+                isAuthenticated: state.isAuthenticated,
+                login: state.login,
+                register: state.register,
+                logout: state.logout,
+                verify: state.verify,
+            }),
         }
     )
 );

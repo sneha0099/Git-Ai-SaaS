@@ -1,9 +1,10 @@
-import axios from 'axios';
-
-const API = import.meta.env.VITE_API_URL;
-
+import instance from '@/lib/axios';
 export const loginUser = async (email: string, password: string) => {
-    const response = await axios.post(`${API}/auth/login`, { email, password });
+    const response = await instance.post(
+        '/auth/login',
+        { email, password },
+        { withCredentials: false }
+    );
     return response.data;
 };
 
@@ -13,26 +14,33 @@ export const registerUser = async (
     email: string,
     password: string
 ) => {
-    const response = await axios.post(`${API}/auth/register`, {
-        firstName,
-        lastName,
-        email,
-        password,
-    });
+    const response = await instance.post(
+        '/auth/register',
+        {
+            firstName,
+            lastName,
+            email,
+            password,
+        },
+        { withCredentials: false }
+    );
     return response.data;
 };
 
 export const logout = async () => {
-    await axios.post(`${API}/auth/logout`, { withCredentials: true });
-    return;
+    await instance.post('/auth/logout');
 };
 
 export const resendOtp = async (userId: string) => {
-    await axios.post(`${API}/auth/resend-otp`, { userId });
+    await instance.post('/auth/resend-otp', { userId });
 };
 
 export const forgotPassword = async (email: string) => {
-    await axios.post(`${API}/auth/forgot-password`, { email });
+    await instance.post(
+        '/auth/forgot-password',
+        { email },
+        { withCredentials: false }
+    );
 };
 
 export const resetPassword = async (
@@ -40,14 +48,22 @@ export const resetPassword = async (
     newPassword: string,
     confirmPassword: string
 ) => {
-    await axios.post(`${API}/auth/reset-password`, {
-        token,
-        newPassword,
-        confirmPassword,
-    });
+    await instance.post(
+        '/auth/reset-password',
+        {
+            token,
+            newPassword,
+            confirmPassword,
+        },
+        { withCredentials: false }
+    );
 };
 
 export const verifyOtp = async (otp: string, userId: string) => {
-    const response = await axios.post(`${API}/auth/verify`, { otp, userId });
+    const response = await instance.post(
+        '/auth/verify',
+        { otp, userId },
+        { withCredentials: false }
+    );
     return response.data;
 };
