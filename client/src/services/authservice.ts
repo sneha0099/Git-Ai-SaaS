@@ -1,4 +1,5 @@
 import instance from '@/lib/axios';
+
 export const loginUser = async (email: string, password: string) => {
     const response = await instance.post(
         '/auth/login',
