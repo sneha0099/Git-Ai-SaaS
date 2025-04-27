@@ -5,7 +5,7 @@ import {
     registerUser,
     verifyOtp,
     logout,
-} from '@/services/authservice'; // ✅ adjust your import
+} from '@/services/authservice';
 
 interface User {
     id: string;
