@@ -2,6 +2,7 @@
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
@@ -23,6 +24,7 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
+import LogoutButton from './LogoutButton';
 
 const items = [
     {
@@ -152,6 +154,9 @@ export default function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
+            <SidebarFooter>
+                <LogoutButton />
+            </SidebarFooter>
         </Sidebar>
     );
 }
