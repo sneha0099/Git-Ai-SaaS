@@ -8,7 +8,6 @@ import {
 import { Button } from '@/components/ui/button';
 import useAuthStore from '@/store/AuthStore';
 import { resendOtp } from '@/services/authservice';
-import { verifyOtp } from '@/services/authservice';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import {
@@ -30,6 +29,7 @@ export default function VerifyPage() {
     const navigate = useNavigate();
 
     const userId = useAuthStore((state) => state.user?.id as string);
+    const verifyOtp = useAuthStore((state) => state.verify);
 
     const {
         handleSubmit,
