@@ -9,18 +9,18 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import useAuthStore from '@/store/AuthStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ResetPasswordSchema } from '@/types/AuthSchema';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { EyeClosedIcon, EyeIcon } from 'lucide-react';
 import { useState } from 'react';
+import { resetPassword } from '@/services/authservice';
 
 export default function ResetPassword() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const resetPassword = useAuthStore((state) => state.resetPassword);
+
     const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();

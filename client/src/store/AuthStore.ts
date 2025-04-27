@@ -8,6 +8,7 @@ import {
     resetPassword,
     verifyOtp,
     resendOtp,
+    logout,
 } from '../services/authservice'; // adjust this import as per your folder structure
 
 interface User {
@@ -29,13 +30,13 @@ interface AuthState {
         password: string
     ) => Promise<void>;
     logout: () => void;
-    resendOtp: (userId: string) => Promise<void>;
-    forgotPassword: (email: string) => Promise<void>;
-    resetPassword: (
-        token: string,
-        newPassword: string,
-        confirmPassword: string
-    ) => Promise<void>;
+    // resendOtp: (userId: string) => Promise<void>;
+    // forgotPassword: (email: string) => Promise<void>;
+    // resetPassword: (
+    //     token: string,
+    //     newPassword: string,
+    //     confirmPassword: string
+    // ) => Promise<void>;
     verify: (otp: string, userId: string) => Promise<void>;
 }
 
@@ -63,24 +64,12 @@ const useAuthStore = create<AuthState>()(
                 set({ user: data });
             },
 
-            logout: () => {
+            logout: async () => {
+                await logout();
                 set({ user: null, token: null, isAuthenticated: false });
             },
 
-            resendOtp: async (userId) => {
-                await resendOtp(userId);
-            },
-
-            forgotPassword: async (email) => {
-                await forgotPassword(email);
-            },
-
-            resetPassword: async (token, newPassword, confirmPassword) => {
-                await resetPassword(token, newPassword, confirmPassword);
-            },
-
             verify: async (otp, userId) => {
-                console.log(otp, userId, `store`);
                 const { user } = await verifyOtp(otp, userId);
                 set({ user });
             },

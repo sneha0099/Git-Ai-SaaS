@@ -22,6 +22,11 @@ export const registerUser = async (
     return response.data;
 };
 
+export const logout = async () => {
+    await axios.post(`${API}/auth/logout`, { withCredentials: true });
+    return;
+};
+
 export const resendOtp = async (userId: string) => {
     await axios.post(`${API}/auth/resend-otp`, { userId });
 };

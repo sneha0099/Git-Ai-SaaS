@@ -9,15 +9,13 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import useAuthStore from '@/store/AuthStore';
+import { forgotPassword } from '@/services/authservice';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ForgotPasswordSchema } from '@/types/AuthSchema'; // ✅ Import the schema
 import * as z from 'zod';
 import { toast } from 'sonner';
 
 export default function ForgotPassword() {
-    const forgotPassword = useAuthStore((state) => state.forgotPassword);
-
     const {
         register,
         handleSubmit,

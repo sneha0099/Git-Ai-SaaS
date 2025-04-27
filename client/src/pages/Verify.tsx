@@ -6,7 +6,9 @@ import {
     InputOTPSeparator,
 } from '@/components/ui/input-otp';
 import { Button } from '@/components/ui/button';
-import useAuthStore from '../store/AuthStore';
+import useAuthStore from '@/store/AuthStore';
+import { resendOtp } from '@/services/authservice';
+import { verifyOtp } from '@/services/authservice';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import {
@@ -27,8 +29,6 @@ export default function VerifyPage() {
 
     const navigate = useNavigate();
 
-    const verify = useAuthStore((state) => state.verify);
-    const resendOtp = useAuthStore((state) => state.resendOtp);
     const userId = useAuthStore((state) => state.user?.id as string);
 
     const {
@@ -56,7 +56,7 @@ export default function VerifyPage() {
 
     const onSubmit = async (data: z.infer<typeof VerifyOtpSchema>) => {
         try {
-            await verify(data.otp, data.userId);
+            await verifyOtp(data.otp, data.userId);
             toast.success('OTP verified successfully!');
             reset();
             navigate('/dashboard');
