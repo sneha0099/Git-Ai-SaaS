@@ -1,11 +1,7 @@
 import instance from '@/lib/axios';
 
 export const loginUser = async (email: string, password: string) => {
-    const response = await instance.post(
-        '/auth/login',
-        { email, password },
-        { withCredentials: false }
-    );
+    const response = await instance.post('/auth/login', { email, password });
     return response.data;
 };
 
@@ -15,16 +11,12 @@ export const registerUser = async (
     email: string,
     password: string
 ) => {
-    const response = await instance.post(
-        '/auth/register',
-        {
-            firstName,
-            lastName,
-            email,
-            password,
-        },
-        { withCredentials: false }
-    );
+    const response = await instance.post('/auth/register', {
+        firstName,
+        lastName,
+        email,
+        password,
+    });
     return response.data;
 };
 
@@ -37,11 +29,7 @@ export const resendOtp = async (userId: string) => {
 };
 
 export const forgotPassword = async (email: string) => {
-    await instance.post(
-        '/auth/forgot-password',
-        { email },
-        { withCredentials: false }
-    );
+    await instance.post('/auth/forgot-password', { email });
 };
 
 export const resetPassword = async (
@@ -49,22 +37,14 @@ export const resetPassword = async (
     newPassword: string,
     confirmPassword: string
 ) => {
-    await instance.post(
-        '/auth/reset-password',
-        {
-            token,
-            newPassword,
-            confirmPassword,
-        },
-        { withCredentials: false }
-    );
+    await instance.post('/auth/reset-password', {
+        token,
+        newPassword,
+        confirmPassword,
+    });
 };
 
 export const verifyOtp = async (otp: string, userId: string) => {
-    const response = await instance.post(
-        '/auth/verify',
-        { otp, userId },
-        { withCredentials: false }
-    );
+    const response = await instance.post('/auth/verify', { otp, userId });
     return response.data;
 };

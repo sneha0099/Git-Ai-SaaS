@@ -38,9 +38,10 @@ export const JWT_VERIFY = async (token: string) => {
 };
 
 export const COOKIE_OPTIONS: CookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production' ? true : false,
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for production, 'lax' for local
+    httpOnly: true, // Can't be accessed by JavaScript (for security reasons)
+    secure: process.env.NODE_ENV === 'production', // `true` in production, `false` in development
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for production, 'lax' for local (for cross-origin)
+    maxAge: 60 * 60 * 1000, // Token expiration (e.g., 1 hour)
 };
 
 export const corsOptions = {
