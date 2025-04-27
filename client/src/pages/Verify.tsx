@@ -1,85 +1,4 @@
-// import { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import {
-//     InputOTP,
-//     InputOTPGroup,
-//     InputOTPSeparator,
-//     InputOTPSlot,
-// } from '@/components/ui/input-otp';
-// import { Button } from '@/components/ui/button';
-// import useAuthStore from '@/store/AuthStore';
-
-// export default function Verify() {
-//     const [otp, setOtp] = useState<string>(''); // ✅ Define OTP state
-//     const [loading, setLoading] = useState(false);
-//     const [error, setError] = useState('');
-
-//     const userId = useAuthStore((state) => state.user?.id as string); // ✅ Get userId from AuthStore
-
-//     //const email = useAuthStore.getState().user?.email as string; // ✅ Get email from AuthStore
-//     const verifyOtp = useAuthStore((state) => state.verify);
-//     const navigate = useNavigate();
-
-//     const handleVerify = async () => {
-//         setError('');
-
-//         setLoading(true);
-//         try {
-//             console.log(otp, userId);
-
-//             await verifyOtp(otp, userId); // ✅ Now passing both email & OTP correctly
-//             alert('OTP verified successfully!');
-//             navigate('/dashboard'); // Redirect to dashboard or any other page
-//         } catch (err) {
-//             setError('Invalid OTP. Please try again.');
-//             console.error('OTP verification failed', err);
-//         }
-//         setLoading(false);
-//     };
-
-//     return (
-//         <div className="flex justify-center items-center min-h-screen">
-//             <div className="w-96 p-6 shadow-lg bg-white rounded-lg">
-//                 <div className="flex flex-col items-center justify-center">
-//                     <h2 className="text-xl font-bold mb-4 text-center">
-//                         Verify OTP
-//                     </h2>
-
-//                     {error && (
-//                         <p className="text-red-500 text-sm mb-2 text-center">
-//                             {error}
-//                         </p>
-//                     )}
-
-//                     {/* ✅ Pass OTP state */}
-//                     <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-//                         <InputOTPGroup>
-//                             <InputOTPSlot index={0} />
-//                             <InputOTPSlot index={1} />
-//                             <InputOTPSlot index={2} />
-//                         </InputOTPGroup>
-//                         <InputOTPSeparator />
-//                         <InputOTPGroup>
-//                             <InputOTPSlot index={3} />
-//                             <InputOTPSlot index={4} />
-//                             <InputOTPSlot index={5} />
-//                         </InputOTPGroup>
-//                     </InputOTP>
-//                 </div>
-
-//                 <Button
-//                     onClick={handleVerify}
-//                     disabled={loading || otp.length !== 6}
-//                     className="w-full mt-4 mb-4"
-//                 >
-//                     {loading ? 'Verifying...' : 'Verify OTP'}
-//                 </Button>
-//             </div>
-//         </div>
-//     );
-// }
-
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import {
     InputOTP,
     InputOTPGroup,
@@ -87,125 +6,159 @@ import {
     InputOTPSeparator,
 } from '@/components/ui/input-otp';
 import { Button } from '@/components/ui/button';
-import useAuthStore from '../store/AuthStore'; // adjust path
+import useAuthStore from '../store/AuthStore';
 import { useNavigate } from 'react-router-dom';
-//import { resendOtp } from '../services/authService'; // service we'll create
+import { z } from 'zod';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@radix-ui/react-label';
+import { useForm } from 'react-hook-form';
+import { VerifyOtpSchema } from '@/types/AuthSchema';
+import { toast } from 'sonner';
 
 export default function VerifyPage() {
-    const [otp, setOtp] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [resendMessage, setResendMessage] = useState('');
     const [cooldown, setCooldown] = useState(0);
+    const [isResending, setIsResending] = useState(false);
+
     const navigate = useNavigate();
 
     const verify = useAuthStore((state) => state.verify);
     const resendOtp = useAuthStore((state) => state.resendOtp);
     const userId = useAuthStore((state) => state.user?.id as string);
 
-    // console.log(userId);
-    useEffect(() => {
-        if (!userId) {
-            navigate('/login');
-        }
-    }, [userId, navigate]);
+    const {
+        handleSubmit,
+        setValue,
+        watch,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm<z.infer<typeof VerifyOtpSchema>>({
+        defaultValues: {
+            otp: '',
+            userId: userId,
+        },
+    });
+
+    const watchedOtp = watch('otp');
 
     useEffect(() => {
-        if (cooldown > 0) {
-            const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
-            return () => clearTimeout(timer);
-        }
+        if (cooldown === 0) return;
+        const timer = setInterval(() => {
+            setCooldown((prev) => prev - 1);
+        }, 1000);
+        return () => clearInterval(timer);
     }, [cooldown]);
 
-    const handleVerify = async () => {
+    const onSubmit = async (data: z.infer<typeof VerifyOtpSchema>) => {
         try {
-            setLoading(true);
-            setError('');
-            if (!userId) {
-                setError('User ID missing.');
-                return;
-            }
-            console.log(otp, userId, 'page');
-            await verify(otp, userId);
-            setResendMessage('OTP verified successfully!');
-
-            setTimeout(() => {
-                navigate('/dashboard');
-            }, 1000); // 1s delay
-        } catch (err: any) {
-            setError(err?.response?.data?.message || 'Verification failed.');
-        } finally {
-            setLoading(false);
+            await verify(data.otp, data.userId);
+            toast.success('OTP verified successfully!');
+            reset();
+            navigate('/dashboard');
+        } catch (error: any) {
+            toast.error(
+                error?.response?.data?.message || 'Failed to verify OTP!'
+            );
+            reset();
         }
     };
 
-    const handleResendOtp = async () => {
+    const resendOtpSubmit = async () => {
+        if (cooldown > 0 || isResending) return;
         try {
-            setError('');
-            setResendMessage('');
+            setIsResending(true);
             if (!userId) {
-                setError('User ID missing.');
+                toast.error('User ID is not available!');
                 return;
             }
             await resendOtp(userId);
-            setResendMessage('OTP resent successfully!');
-            setCooldown(30); // 30s cooldown
-        } catch (err: any) {
-            setError('Failed to resend OTP.');
+            toast.success('OTP resent successfully!');
+            reset();
+            setCooldown(30);
+        } catch (error: any) {
+            toast.error(
+                error?.response?.data?.message || 'Failed to resend OTP!'
+            );
+            reset();
+        } finally {
+            setIsResending(false);
         }
     };
 
     return (
         <div className="flex justify-center items-center min-h-screen">
-            <div className="w-96 p-6 shadow-lg bg-white rounded-lg">
-                <div className="flex flex-col items-center justify-center">
-                    <h2 className="text-xl font-bold mb-4 text-center">
-                        Verify OTP
-                    </h2>
-
-                    {error && (
-                        <p className="text-red-500 text-sm mb-2 text-center">
-                            {error}
-                        </p>
-                    )}
-                    {resendMessage && (
-                        <p className="text-green-500 text-sm mb-2 text-center">
-                            {resendMessage}
-                        </p>
-                    )}
-
-                    <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-                        <InputOTPGroup>
-                            <InputOTPSlot index={0} />
-                            <InputOTPSlot index={1} />
-                            <InputOTPSlot index={2} />
-                        </InputOTPGroup>
-                        <InputOTPSeparator />
-                        <InputOTPGroup>
-                            <InputOTPSlot index={3} />
-                            <InputOTPSlot index={4} />
-                            <InputOTPSlot index={5} />
-                        </InputOTPGroup>
-                    </InputOTP>
-                </div>
-
-                <Button
-                    onClick={handleVerify}
-                    disabled={loading || otp.length !== 6}
-                    className="w-full mt-4 mb-2"
-                >
-                    {loading ? 'Verifying...' : 'Verify OTP'}
-                </Button>
-
-                <Button
-                    onClick={handleResendOtp}
-                    disabled={cooldown > 0}
-                    variant="ghost"
-                    className="w-full text-sm text-blue-600"
-                >
-                    {cooldown > 0 ? `Resend OTP in ${cooldown}s` : 'Resend OTP'}
-                </Button>
-            </div>
+            <Card className="max-w-md w-full mx-auto ">
+                <CardHeader>
+                    <CardTitle className="text-2xl">
+                        Verify Your Account
+                    </CardTitle>
+                    <CardDescription>
+                        To keep your account secure, please enter the One-Time
+                        Password (OTP) sent to your registered email. This helps
+                        us confirm your identity.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="mb-4">
+                            <div className="flex justify-between">
+                                <Label htmlFor="verifyOtp">
+                                    One-Time Password
+                                </Label>
+                                <button
+                                    type="button"
+                                    aria-label="Resend OTP"
+                                    onClick={resendOtpSubmit}
+                                    disabled={cooldown > 0}
+                                    className="text-sm underline text-blue-500 disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
+                                >
+                                    {isResending
+                                        ? 'Sending...'
+                                        : cooldown > 0
+                                          ? `Resend OTP (${cooldown}s)`
+                                          : 'Resend OTP?'}
+                                </button>
+                            </div>
+                            <div className="flex flex-col items-center justify-center mt-2">
+                                <InputOTP
+                                    maxLength={6}
+                                    value={watchedOtp}
+                                    onChange={(value) => setValue('otp', value)}
+                                >
+                                    <InputOTPGroup>
+                                        <InputOTPSlot index={0} />
+                                        <InputOTPSlot index={1} />
+                                        <InputOTPSlot index={2} />
+                                    </InputOTPGroup>
+                                    <InputOTPSeparator />
+                                    <InputOTPGroup>
+                                        <InputOTPSlot index={3} />
+                                        <InputOTPSlot index={4} />
+                                        <InputOTPSlot index={5} />
+                                    </InputOTPGroup>
+                                </InputOTP>
+                                {errors.otp && (
+                                    <p className="errorMsgStyle text-red-500">
+                                        {errors.otp.message}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                        <Button
+                            className="w-full"
+                            disabled={isSubmitting}
+                            type="submit"
+                        >
+                            Verify OTP
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
         </div>
     );
 }

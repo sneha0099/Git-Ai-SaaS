@@ -44,10 +44,10 @@ export const COOKIE_OPTIONS: CookieOptions = {
 };
 
 export const corsOptions = {
-    origin: [FRONTEND_ORIGIN],
-    methods: 'GET,PUT,PATCH,POST,DELETE',
+    origin: FRONTEND_ORIGIN,
+    methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
-    optionsSuccessStatus: 204, // For legacy browsers
-    maxAge: 86400, // Cache preflight request results for 1 day (in seconds)
+    optionsSuccessStatus: 204, // For legacy browsers like IE11
+    maxAge: 86400, // Cache preflight response for 1 day (in seconds)
 };

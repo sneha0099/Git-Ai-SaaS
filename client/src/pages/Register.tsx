@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { RegisterSchema } from '@/types/AuthSchema';
 import useAuthStore from '@/store/AuthStore';
 import { Link, useNavigate } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -15,21 +13,19 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 
 export default function Register() {
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
     const RegisterUser = useAuthStore((state) => state.register);
-    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate('/dashboard');
-        }
-    }, [isAuthenticated, navigate]);
 
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),
@@ -43,17 +39,19 @@ export default function Register() {
                 data.email,
                 data.password
             );
-            alert('Registration successful!');
+            toast.success('Registration successful!');
+            reset();
             navigate('/verify');
-        } catch (error) {
-            alert('Registration failed!');
-            console.log('Registration failed', error);
+        } catch (error: any) {
+            toast.error(
+                error?.response?.data?.message || 'Registration failed!'
+            );
         }
     };
 
     return (
         <div className="flex justify-center items-center min-h-screen">
-            <Card className="w-96 p-6 shadow-lg">
+            <Card className="max-w-md w-full p-5 mx-auto">
                 <CardHeader>
                     <CardTitle className="text-2xl">Register</CardTitle>
                     <CardDescription>
@@ -64,11 +62,11 @@ export default function Register() {
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="mb-4">
                             <Label htmlFor="firstName">First Name</Label>
-                            <Input
+                            <input
                                 id="firstName"
                                 type="text"
                                 placeholder="Enter your first name"
-                                className="inputStyle"
+                                className="inputStyle "
                                 {...register('firstName')}
                             />
                             {errors.firstName && (
@@ -80,7 +78,7 @@ export default function Register() {
 
                         <div className="mb-4">
                             <Label htmlFor="lastName">Last Name</Label>
-                            <Input
+                            <input
                                 id="lastName"
                                 type="text"
                                 placeholder="Enter your last name"
@@ -96,7 +94,7 @@ export default function Register() {
 
                         <div className="mb-4">
                             <Label htmlFor="email">Email</Label>
-                            <Input
+                            <input
                                 id="email"
                                 type="email"
                                 placeholder="Enter your email"
@@ -112,13 +110,34 @@ export default function Register() {
 
                         <div className="mb-4">
                             <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="Enter your password"
-                                className="inputStyle"
-                                {...register('password')}
-                            />
+                            <div className="relative">
+                                <input
+                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    {...register('password')}
+                                    className="inputStyle"
+                                    placeholder="Enter your password"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setShowPassword(!showPassword)
+                                    }
+                                    className="absolute py-4 right-0 px-3 text-sm font-semibold text-gray-600"
+                                >
+                                    {showPassword ? (
+                                        <EyeIcon
+                                            className="h-4 w-4"
+                                            aria-hidden="true"
+                                        />
+                                    ) : (
+                                        <EyeOffIcon
+                                            className="h-4 w-4"
+                                            aria-hidden="true"
+                                        />
+                                    )}
+                                </button>
+                            </div>
                             {errors.password && (
                                 <p className="errorMsgStyle">
                                     {errors.password.message}
@@ -131,9 +150,10 @@ export default function Register() {
                             disabled={isSubmitting}
                             className="w-full"
                         >
-                            Register
+                            {isSubmitting ? 'Registering...' : 'Register'}
                         </Button>
                     </form>
+
                     <div className="mt-4 text-center text-sm">
                         Already have an account?{' '}
                         <Link to="/login" className="underline">

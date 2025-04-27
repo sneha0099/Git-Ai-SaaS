@@ -1,107 +1,155 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import useAuthStore from '@/store/AuthStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ResetPasswordSchema } from '@/types/AuthSchema';
 import * as z from 'zod';
-
-// ✅ Schema validation using Zod
-ResetPasswordSchema.refine(
-    (data) => data.newPassword === data.confirmPassword,
-    {
-        message: 'Passwords do not match',
-        path: ['confirmPassword'],
-    }
-);
+import { toast } from 'sonner';
+import { EyeClosedIcon, EyeIcon } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ResetPassword() {
-    const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const resetPassword = useAuthStore((state) => state.resetPassword);
     const navigate = useNavigate();
+
     const [searchParams] = useSearchParams();
-    const token = searchParams.get('token'); // ✅ Get token from URL
+    const token = searchParams.get('token');
 
-    useEffect(() => {
-        if (!token) {
-            navigate('/login');
-        }
-    }, [token, navigate]);
-
-    // ✅ Use useForm for validation
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm<{ newPassword: string; confirmPassword: string }>({
         resolver: zodResolver(ResetPasswordSchema),
     });
 
     const onSubmit = async (data: z.infer<typeof ResetPasswordSchema>) => {
-        setError('');
-        setMessage('');
-
-        if (!token) {
-            setError('Invalid or expired reset token.');
-            return;
-        }
-
         try {
-            console.log(token, data.newPassword, data.confirmPassword);
-
+            if (!token) {
+                toast.error('Invalid or missing token');
+                return;
+            }
             await resetPassword(token, data.newPassword, data.confirmPassword);
-            setMessage('Password reset successfully. You can now login.');
-            setTimeout(() => navigate('/login'), 2000); // ✅ Redirect after success
-        } catch (err) {
-            setError('Failed to reset password. Please try again.');
-            console.log('Error resetting password', err);
+            toast.success('Password reset successfully!');
+
+            reset();
+            navigate('/login');
+        } catch (error: any) {
+            toast.error(
+                error?.response?.data?.message ||
+                    error?.message ||
+                    'Failed to reset password'
+            );
         }
     };
 
     return (
         <div className="flex justify-center items-center min-h-screen">
-            <Card className="w-96 p-6 shadow-lg">
+            <Card className="max-w-md w-full mx-auto bg-lightTheme">
+                <CardHeader>
+                    <CardTitle className="text-2xl">Reset Password</CardTitle>
+                    <CardDescription>
+                        Enter your new password to reset your password.
+                    </CardDescription>
+                </CardHeader>
                 <CardContent>
-                    <h2 className="text-xl font-bold mb-4 text-center">
-                        Reset Password
-                    </h2>
-
-                    {error && (
-                        <p className="text-red-500 text-sm mb-2">{error}</p>
-                    )}
-                    {message && (
-                        <p className="text-green-500 text-sm mb-2">{message}</p>
-                    )}
-
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className="flex flex-col space-y-1.5 mb-4">
-                            <Label>New Password</Label>
-                            <Input
-                                type="password"
-                                placeholder="Enter new password"
-                                {...register('newPassword')}
-                            />
+                        <div className="mb-4">
+                            <Label htmlFor="newPassword">New Password</Label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    id="newPassword"
+                                    className="inputStyle"
+                                    placeholder="Enter new password"
+                                    autoComplete="new-password"
+                                    {...register('newPassword')}
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute right-0 px-3 py-5 text-sm font-semibold text-gray-600"
+                                    aria-label={
+                                        showPassword
+                                            ? 'Hide password'
+                                            : 'Show password'
+                                    }
+                                    onClick={() =>
+                                        setShowPassword(!showPassword)
+                                    }
+                                >
+                                    {showPassword ? (
+                                        <EyeIcon
+                                            className="w-4 h-4"
+                                            aria-hidden="true"
+                                        />
+                                    ) : (
+                                        <EyeClosedIcon
+                                            className="w-4 h-4"
+                                            aria-hidden="true"
+                                        />
+                                    )}
+                                </button>
+                            </div>
                             {errors.newPassword && (
-                                <p className="text-red-500 text-sm">
+                                <p className="errorMsgStyle">
                                     {errors.newPassword.message}
                                 </p>
                             )}
                         </div>
 
-                        <div className="flex flex-col space-y-1.5 mb-4">
-                            <Label>Confirm Password</Label>
-                            <Input
-                                type="password"
-                                placeholder="Confirm new password"
-                                {...register('confirmPassword')}
-                            />
+                        <div className="mb-4">
+                            <Label htmlFor="confirmPassword">
+                                Confirm Password
+                            </Label>
+                            <div className="relative">
+                                <input
+                                    type={
+                                        showConfirmPassword
+                                            ? 'text'
+                                            : 'password'
+                                    }
+                                    id="confirmPassword"
+                                    className="inputStyle"
+                                    placeholder="Re-enter your New Password"
+                                    autoComplete="new-password"
+                                    {...register('confirmPassword')}
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute right-0 px-3 py-5 text-sm font-semibold text-gray-600"
+                                    onClick={() =>
+                                        setShowConfirmPassword(
+                                            !showConfirmPassword
+                                        )
+                                    }
+                                >
+                                    {showConfirmPassword ? (
+                                        <EyeIcon
+                                            className="w-4 h-4"
+                                            aria-hidden="true"
+                                        />
+                                    ) : (
+                                        <EyeClosedIcon
+                                            className="w-4 h-4"
+                                            aria-hidden="true"
+                                        />
+                                    )}
+                                </button>
+                            </div>
                             {errors.confirmPassword && (
-                                <p className="text-red-500 text-sm">
+                                <p className="errorMsgStyle">
                                     {errors.confirmPassword.message}
                                 </p>
                             )}
@@ -116,15 +164,12 @@ export default function ResetPassword() {
                         </Button>
                     </form>
 
-                    <p className="text-sm text-center mt-3">
-                        Remembered your password?
-                        <span
-                            className="text-blue-500 cursor-pointer ml-1"
-                            onClick={() => navigate('/login')}
-                        >
+                    <div className="mt-4 text-center text-sm">
+                        Remembered your password?{' '}
+                        <Link to="/login" className="underline">
                             Login
-                        </span>
-                    </p>
+                        </Link>
+                    </div>
                 </CardContent>
             </Card>
         </div>

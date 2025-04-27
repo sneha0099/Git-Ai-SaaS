@@ -121,4 +121,11 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    .inputStyle {
+        @apply w-full mt-1 px-4 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring;
+    }
+    .errorMsgStyle {
+        @apply mt-1 text-sm text-destructive;
+    }
 }

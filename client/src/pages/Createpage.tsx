@@ -18,7 +18,7 @@ function Createpage() {
     }
     return (
         <div className="flex items-center gap-12 h-full justify-center">
-            <img src='/create.png' alt="create" width={400} height={400} />
+            <img src="/create.png" alt="create" width={400} height={400} />
             <div>
                 <div>
                     <h1 className="font-semibold text-2xl">
@@ -40,7 +40,7 @@ function Createpage() {
                         <div className="h-2"></div>
 
                         <Input
-                            {...register('repoUrl',{ required: true })}
+                            {...register('repoUrl', { required: true })}
                             placeholder="GitHub repository URL"
                             type="url"
                             required

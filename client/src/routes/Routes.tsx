@@ -99,22 +99,18 @@ export default function AppRoutes() {
             <Route
                 path="/dashboard"
                 element={
-                    <ProtectedRoute>
-                        <Layout>
-                            <Dashboard />
-                        </Layout>
-                    </ProtectedRoute>
+                    <Layout>
+                        <Dashboard />
+                    </Layout>
                 }
             />
 
             <Route
                 path="/create"
                 element={
-                    <ProtectedRoute>
-                        <Layout>
-                            <Createpage />
-                        </Layout>
-                    </ProtectedRoute>
+                    <Layout>
+                        <Createpage />
+                    </Layout>
                 }
             />
         </Routes>
