@@ -1,118 +1,88 @@
-// import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
-// // import PrivateRoute from './components/PrivateRoute';
-// // import ConditionalRoute from './components/ConditionalRoute';
-// // import PublicRoute from './components/PublicRoute'; // ✅ Import PublicRoute
-// import useAuthStore from '../store/AuthStore';
-// import ProtectedRoute from './Protected';
-// import Layout from '../components/Layout';
-// import Homepage from '../pages/Homepage';
-// import Login from '../pages/Login';
-// import Register from '../pages/Register';
-// import Verify from '../pages/Verify';
-// import ForgotPassword from '../pages/Forgotpassword';
-// import ResetPassword from '../pages/Resetpassword';
-// // import Dashboard from '../pages/Dashboard';
-// // import Sidebar from '../components/Sidebar';
-
-// const AppRouter = () => {
-//     const { isVerifying, isResettingPassword } = useAuthStore();
-
-//     return (
-//         <Router>
-//             <Routes>
-//                 {/* Public Routes */}
-//                 <Route path="/" element={<Homepage />} />
-//                 <Route path="/forgot-password" element={<ForgotPassword />} />
-
-//                 {/* ✅ Protect Login & Register Pages from Logged-in Users */}
-//                 <Route element={<PublicRoute />}>
-//                     <Route path="/login" element={<Login />} />
-//                     <Route path="/register" element={<Register />} />
-//                 </Route>
-
-//                 {/* ✅ Conditionally Protected Routes */}
-//                 <Route
-//                     element={
-//                         <ConditionalRoute
-//                             condition={isVerifying}
-//                             redirectTo="/"
-//                         />
-//                     }
-//                 >
-//                     <Route path="/verify" element={<Verify />} />
-//                 </Route>
-
-//                 <Route
-//                     element={
-//                         <ConditionalRoute
-//                             condition={isResettingPassword}
-//                             redirectTo="/"
-//                         />
-//                     }
-//                 >
-//                     <Route path="/reset-password" element={<ResetPassword />} />
-//                 </Route>
-
-//                 {/* 🔒 Fully Protected Routes - Requires Authentication */}
-//                 <Route
-//                     path="/dashboard"
-//                     element={
-//                         <ProtectedRoute>
-//                             <Layout>
-//                                 <div>This is temporary child</div>{' '}
-//                                 {/* 👈 satisfies the `children` prop */}
-//                             </Layout>
-//                         </ProtectedRoute>
-//                     }
-//                 />
-//             </Routes>
-//         </Router>
-//     );
-// };
-
-// export default AppRouter;
-
-// src/routes/routes.tsx
 import { Routes, Route } from 'react-router-dom';
 import Homepage from '@/pages/Homepage';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Verify from '@/pages/Verify';
+import Layout from '@/components/Layout';
+import ProtectedRoute from '@/routes/ProtectedRoute';
 import ForgotPassword from '@/pages/Forgotpassword';
 import ResetPassword from '@/pages/Resetpassword';
-import ProtectedRoute from '@/routes/Protected';
-import Layout from '@/components/Layout';
 import Dashboard from '@/pages/Dashboard';
 import Createpage from '@/pages/Createpage';
+import NotFound from '@/pages/NotFound';
 
 export default function AppRoutes() {
     return (
         <Routes>
+            {/* Publicly accessible pages */}
             <Route path="/" element={<Homepage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/verify" element={<Verify />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
 
-            {/* Protected dashboard route */}
+            {/* Routes protected for only unauthenticated users */}
+            <Route
+                path="/login"
+                element={
+                    <ProtectedRoute type="auth">
+                        <Login />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/register"
+                element={
+                    <ProtectedRoute type="auth">
+                        <Register />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/verify"
+                element={
+                    <ProtectedRoute type="auth">
+                        <Verify />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/forgot-password"
+                element={
+                    <ProtectedRoute type="auth">
+                        <ForgotPassword />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/reset-password"
+                element={
+                    <ProtectedRoute type="auth">
+                        <ResetPassword />
+                    </ProtectedRoute>
+                }
+            />
+
             <Route
                 path="/dashboard"
                 element={
-                    <Layout>
-                        <Dashboard />
-                    </Layout>
+                    <ProtectedRoute type="private">
+                        <Layout>
+                            <Dashboard />
+                        </Layout>
+                    </ProtectedRoute>
                 }
             />
-
             <Route
                 path="/create"
                 element={
-                    <Layout>
-                        <Createpage />
-                    </Layout>
+                    <ProtectedRoute type="private">
+                        <Layout>
+                            <Createpage />
+                        </Layout>
+                    </ProtectedRoute>
                 }
             />
+
+            {/* 404 Not Found Page */}
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 }

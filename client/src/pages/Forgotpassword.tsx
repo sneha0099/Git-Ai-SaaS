@@ -30,6 +30,9 @@ export default function ForgotPassword() {
     const onSubmit = async (data: z.infer<typeof ForgotPasswordSchema>) => {
         try {
             await forgotPassword(data.email);
+            toast.success(
+                'Password reset link sent to your email. Please check your inbox.'
+            );
             reset();
         } catch (error: any) {
             toast.error(

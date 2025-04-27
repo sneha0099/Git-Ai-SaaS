@@ -43,7 +43,6 @@ export const resetPassword = async (
 };
 
 export const verifyOtp = async (otp: string, userId: string) => {
-    console.log(otp, userId, `service`);
     const response = await axios.post(`${API}/auth/verify`, { otp, userId });
     return response.data;
 };
