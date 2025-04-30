@@ -46,6 +46,7 @@ model Project {
 
   name      String                        // Unique name for the project
   gitUrl    String                        // URL for the Git repository
+  githubToken String?                      // GitHub token for authentication (optional)
   deletedAt DateTime?                     // Timestamp when the project was deleted
   userToProjects UserToProject[] // One-to-many relation to UserToProject model
 }

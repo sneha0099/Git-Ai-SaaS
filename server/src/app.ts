@@ -8,6 +8,7 @@ import errorHandler from './middlewares/errorHandler.middleware';
 import { ApiError } from './utils/ApiError';
 import { API_VERSION } from './config/serverConfig';
 import authRouter from './routes/auth.route';
+import repoRouter from './routes/repo.route';
 import { corsOptions } from './utils/constant';
 
 const app = express();
@@ -32,6 +33,7 @@ app.use(compression());
 app.use(helmet());
 //dasdasdasd
 app.use(`/api/${API_VERSION}/auth`, authRouter);
+app.use(`/api/${API_VERSION}/repo`, repoRouter);
 
 app.get('/health', (req: Request, res: Response) => {
     res.status(200).json({ status: 'UP' });
