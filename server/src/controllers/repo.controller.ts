@@ -23,7 +23,6 @@ export const createProject = async (
                 githubToken,
             },
         });
-        
 
         await prisma.userToProject.create({
             data: {

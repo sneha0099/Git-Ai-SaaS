@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
+import logger from '../utils/logger';
 
 const errorHandler = (
     err: Error | ApiError,
@@ -8,15 +9,22 @@ const errorHandler = (
     res: Response,
     _next: NextFunction
 ) => {
-    if (err instanceof ApiError) {
-        return res
-            .status(err.statusCode)
-            .json(new ApiResponse(err.statusCode, err.data, err.message));
-    }
+    const statusCode = err instanceof ApiError ? err.statusCode : 500;
+    const message =
+        err instanceof ApiError ? err.message : 'Internal Server Error';
+    const data = err instanceof ApiError ? err.data : null;
+
+    logger.error(message, {
+        statusCode,
+        method: req.method,
+        url: req.originalUrl,
+        ip: req.ip,
+        data,
+    });
 
     return res
-        .status(500)
-        .json(new ApiResponse(500, null, 'Internal Server Error'));
+        .status(statusCode)
+        .json(new ApiResponse(statusCode, data, message));
 };
 
 export default errorHandler;

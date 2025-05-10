@@ -21,26 +21,21 @@ export const authMiddleware = async (
         if (!token) {
             return next(new ApiError(401, 'No token provided'));
         }
-        console.log(`Token: ${token}`);
 
         const decodedToken = jwt.verify(token, TOKEN_SECRET) as JwtPayload;
-        console.log(` decoded token: ${decodedToken}`);
-        console.log(`stringifyid: ${JSON.stringify(decodedToken)}`);
 
         if (!decodedToken || !decodedToken.id) {
             return next(new ApiError(401, 'Invalid token'));
         }
 
         const user = await prisma.user.findUnique({
-            where: { id: 'e1b57530-bb22-45c6-b19b-7f4612f320f9' },
+            where: { id: decodedToken.id },
         });
-        console.log(user);
         if (!user) {
             return next(new ApiError(401, 'User not found'));
         }
 
         req.user = user;
-        console.log(user.id);
 
         next();
     } catch (error) {

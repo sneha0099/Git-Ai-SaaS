@@ -1,6 +1,6 @@
 import prisma from '../config/prismaClient';
 import { Request, Response, NextFunction } from 'express';
-import { sendOtpMail } from '../utils/sendOtpMailer';
+import { sendOtpMail } from '../utils/sendOtpMail';
 import { sendforgotPasswordMail } from '../utils/sendForgotPasswordMail';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
