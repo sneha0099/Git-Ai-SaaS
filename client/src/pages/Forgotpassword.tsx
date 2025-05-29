@@ -9,7 +9,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { forgotPassword } from '@/services/authservice';
+import { forgotPassword } from '@/services/authService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ForgotPasswordSchema } from '@/types/AuthSchema'; // ✅ Import the schema
 import * as z from 'zod';

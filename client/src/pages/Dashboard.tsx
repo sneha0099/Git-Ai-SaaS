@@ -1,21 +1,30 @@
 // src/components/DashboardMain.tsx
 import { Button } from '@/components/ui/button';
+import useProject from '@/hooks/use-project';
+import { ExternalLink, Github } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
+    const { project } = useProject();
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <div>
-                    <p className="text-sm text-gray-500">
-                        This project is linked to
-                    </p>
-                    {/* <a
-                        href="https://github.com/elliott-chong/chatpdf-yt"
-                        className="text-blue-500 underline text-sm"
-                        target="_blank"
-                    >
-                        https://github.com/elliott-chong/chatpdf-yt
-                    </a> */}
+                <div className="w-fit rounded-md bg-primary px-3 py-3">
+                    <div className="flex items-center">
+                        <Github className="h-5 w-5 text-white" />
+                        <div className="ml-2">
+                            <p className="text-sm font-medium text-white">
+                                This project is linked to{' '}
+                                <Link
+                                    className="inline-flex items-center text-gray-300 hover:underline"
+                                    to={project?.gitUrl || '#'}
+                                >
+                                    {project?.gitUrl}
+                                    <ExternalLink className="ml-1 h-4 w-4" />
+                                </Link>
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <div className="space-x-2">
                     <Button>Invite a team member!</Button>

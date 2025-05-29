@@ -49,6 +49,7 @@ model Project {
   githubToken String?                      // GitHub token for authentication (optional)
   deletedAt DateTime?                     // Timestamp when the project was deleted
   userToProjects UserToProject[] // One-to-many relation to UserToProject model
+  commits   Commit[]                      // One-to-many relation to Commit model
 }
 
 model UserToProject {
@@ -56,11 +57,29 @@ model UserToProject {
   createdAt   DateTime @default(now())               // Timestamp when the project was created
   updatedAt   DateTime @updatedAt                    // Timestamp when the project was last updated
 
-  userId    String   @unique                        // Foreign key (unique, one-to-one relation)
-  projectId String   @unique                        // Foreign key (unique, one-to-one relation)
+  userId    String                         // Foreign key (unique, one-to-one relation)
+  projectId String                           // Foreign key (unique, one-to-one relation)
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([userId, projectId]) // Composite unique constraint on userId and projectId
+}
+
+model Commit {
+  id       String   @id @default(uuid())           // Primary key for Commit records
+  createdAt   DateTime @default(now())               // Timestamp when the commit was created
+  updatedAt   DateTime @updatedAt                    // Timestamp when the commit was last updated
+
+  projectId String                           // Foreign key (unique, one-to-one relation)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  commitMessage   String                           // Commit message
+  commitHash       String                           // SHA of the commit
+  commitAuthorName     String                           // Author of the commit
+  commitAuthorAvatar   String?                          // Avatar of the commit author (optional)
+  commitDate   DateTime                        // Date of the commit
+
+  summary   String?                          // Summary of the commit (optional)
+
 }

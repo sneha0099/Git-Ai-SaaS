@@ -1,20 +1,38 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { createProject } from '@/services/repoService';
+import { createRepoSchema } from '@/types/repoSchema';
 import { useForm } from 'react-hook-form';
-
-type FormInput = {
-    repoUrl: string;
-    projectName: string;
-    githubToken?: string;
-};
+import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 
 function Createpage() {
-    const { register, handleSubmit, reset } = useForm<FormInput>();
+    const queryClient = useQueryClient();
+    const { register, handleSubmit, reset } =
+        useForm<z.infer<typeof createRepoSchema>>();
 
-    function onSubmit(data: FormInput) {
-        window.alert(JSON.stringify(data, null, 2));
-        return true;
+    const mutation = useMutation({
+        mutationFn: createProject,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
+            toast.success('Project created successfully!');
+            reset();
+        },
+        onError: (error: any) => {
+            console.error('Error creating project:', error);
+            toast.error(
+                error?.response?.data?.message ||
+                    error?.message ||
+                    'Failed to create project'
+            );
+        },
+    });
+
+    async function onSubmit(data: z.infer<typeof createRepoSchema>) {
+        mutation.mutate(data);
     }
+
     return (
         <div className="flex items-center gap-12 h-full justify-center">
             <img src="/create.png" alt="create" width={400} height={400} />
@@ -39,7 +57,7 @@ function Createpage() {
                         <div className="h-2"></div>
 
                         <Input
-                            {...register('repoUrl', { required: true })}
+                            {...register('projectUrl', { required: true })}
                             placeholder="GitHub repository URL"
                             type="url"
                             required
@@ -54,7 +72,11 @@ function Createpage() {
 
                         <div className="h-2"></div>
 
-                        <Button type="submit">Create Project</Button>
+                        <Button type="submit" disabled={mutation.isPending}>
+                            {mutation.isPending
+                                ? 'Creating...'
+                                : 'Create Project'}
+                        </Button>
                     </form>
                 </div>
             </div>

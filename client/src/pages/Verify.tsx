@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/input-otp';
 import { Button } from '@/components/ui/button';
 import useAuthStore from '@/store/AuthStore';
-import { resendOtp } from '@/services/authservice';
+import { resendOtp } from '@/services/authService';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import {

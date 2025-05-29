@@ -15,7 +15,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { EyeClosedIcon, EyeIcon } from 'lucide-react';
 import { useState } from 'react';
-import { resetPassword } from '@/services/authservice';
+import { resetPassword } from '@/services/authService';
 
 export default function ResetPassword() {
     const [showPassword, setShowPassword] = useState(false);

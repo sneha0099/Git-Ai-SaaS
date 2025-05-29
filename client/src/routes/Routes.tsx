@@ -5,7 +5,7 @@ import Register from '@/pages/Register';
 import Verify from '@/pages/Verify';
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/routes/ProtectedRoute';
-import ForgotPassword from '@/pages/Forgotpassword';
+import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/Resetpassword';
 import Dashboard from '@/pages/Dashboard';
 import Createpage from '@/pages/Createpage';

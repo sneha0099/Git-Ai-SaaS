@@ -41,7 +41,7 @@ export const COOKIE_OPTIONS: CookieOptions = {
     httpOnly: true, // Can't be accessed by JavaScript (for security reasons)
     secure: process.env.NODE_ENV === 'production', // `true` in production, `false` in development
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for production, 'lax' for local (for cross-origin)
-    maxAge: 60 * 60 * 1000, // Token expiration (e.g., 1 hour)
+    maxAge: 60 * 60 * 24 * 1000, // 1 day in milliseconds
 };
 
 export const corsOptions = {
